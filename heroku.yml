@@ -1,5 +1,5 @@
-services:
-  mosdns:
-    build: .
-    ports:
-      - "8080:8080"
+build:
+  docker:
+    web: Dockerfile
+run:
+  web: bundle exec mosdns -C config/mosdns.rb
