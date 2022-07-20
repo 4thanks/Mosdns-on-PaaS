@@ -205,7 +205,7 @@ plugins:
       lazy_cache_reply_ttl: 30
       cache_everything: true
   # 屏蔽TYPE65类型请求的插件
-  - tag: qtype65
+  - tag: match_qtype65
     type: query_matcher
     args:
       qtype: [65]
