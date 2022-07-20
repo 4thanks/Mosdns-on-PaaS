@@ -10,16 +10,9 @@ data_providers:
   - tag: geoip
     file: "/etc/mosdns/geoip.dat"
     auto_reload: true
-#  - tag: gfwip
-#    file: "/etc/mosdns/gfw_ip_list.txt"
-#    auto_reload: true
-  - tag: "mem_cache"
-    type: "cache"
-    args:
-      size: 40960
-      lazy_cache_ttl: 259200
-      lazy_cache_reply_ttl: 30
-      cache_everything: true
+  - tag: geoip
+    file: "/etc/mosdns/gfw_ip_list.txt"
+    auto_reload: true
 
 plugins:
   - tag: forward_query_to_fallback_cloudflare
@@ -40,6 +33,7 @@ plugins:
           dial_addr: '1.1.1.1:853'
           enable_pipeline: true
           trusted: true
+
   - tag: forward_query_to_fallback_dnssb
     type: fast_forward
     args:
@@ -77,6 +71,7 @@ plugins:
           dial_addr: '9.9.9.10:853'
           enable_pipeline: true
           trusted: true
+
   - tag: forward_query_to_local_360
     type: fast_forward
     args:
@@ -156,6 +151,7 @@ plugins:
         - addr: 'https://dns-unfiltered.adguard.com/dns-query'
           dial_addr: '94.140.14.141:443'
           trusted: true
+          trusted: true
         - addr: 'tls://dns-unfiltered.adguard.com'
           dial_addr: '94.140.14.140:853'
           enable_pipeline: true
@@ -202,7 +198,24 @@ plugins:
           dial_addr: '208.67.222.2:853'
           enable_pipeline: true
           trusted: true
-
+  - tag: "mem_cache"
+    type: "cache"
+    args:
+      size: 40960
+      lazy_cache_ttl: 259200
+      lazy_cache_reply_ttl: 30
+      cache_everything: true
+  # 屏蔽TYPE65类型请求的插件
+  - tag: qtype65
+    type: query_matcher
+    args:
+      qtype: [65]
+  # 匹配污染IP的插件
+  - tag: response_has_gfw_ip
+    type: response_matcher
+    args:
+      ip:
+        - "provider:gfwip"
   - tag: query_is_blacklist_domain
     type: query_matcher
     args:
@@ -211,12 +224,7 @@ plugins:
       # - 'provider:geosite:category-porn'
       # - "example.example"
   # For more info on geosite: https://github.com/v2fly/domain-list-community/tree/master/data
-  # 匹配污染IP的插件
-#  - tag: response_has_gfw_ip
-#    type: response_matcher
-#    args:
-#      ip:
-#        - "provider:gfwip"
+
   - tag: response_has_local_ip
     type: response_matcher
     args:
@@ -224,10 +232,7 @@ plugins:
         - 'provider:geoip:cn'
       # - "192.168.1.1/24"
   # geoip support two-letter country code: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-  - tag: match_qtype65
-    type: query_matcher
-    args:
-      qtype: [65]
+
   - tag: response_has_valid_rcode
     type: response_matcher
     args:
@@ -261,7 +266,7 @@ plugins:
                 - - forward_query_to_local_360
                 - - forward_query_to_local_alidns
                 - - forward_query_to_local_dnspod
-            - if: '((! response_has_local_ip) && [_response_valid_answer]) || (! response_has_valid_rcode)'    #暂时测试失败(response_has_gfw_ip)
+            - if: '((! response_has_local_ip) && [_response_valid_answer]) || (! response_has_valid_rcode) || (response_has_gfw_ip)'
               exec:
                 - _drop_response
           secondary:
