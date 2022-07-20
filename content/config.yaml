@@ -10,7 +10,7 @@ data_providers:
   - tag: geoip
     file: "/etc/mosdns/geoip.dat"
     auto_reload: true
-  - tag: geoip
+  - tag: gfwip
     file: "/etc/mosdns/gfw_ip_list.txt"
     auto_reload: true
 
