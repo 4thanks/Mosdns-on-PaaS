@@ -351,6 +351,7 @@ plugins:
           dial_addr: '[2620:0:ccd::2]:853'
           enable_pipeline: true
           trusted: true
+
   - tag: query_is_blacklist_domain
     type: query_matcher
     args:
@@ -360,7 +361,7 @@ plugins:
       # - "example.example"
   # For more info on geosite: https://github.com/v2fly/domain-list-community/tree/master/data
 
-  - tag: response_has_blacklist_ip
+  - tag: response_has_local_ip
     type: response_matcher
     args:
       ip:
