@@ -16,5 +16,5 @@ rm -rf /tmp/*
 
 #gfw_ip list
 curl -sS https://raw.githubusercontent.com/pmkol/easymosdns/rules/gfw_ip_list.txt > /tmp/gfw_ip_list.txt
-cp -rf /tmp/*.txt content/diy/
+cp -rf /tmp/*.txt content/
 rm -rf /tmp/*
