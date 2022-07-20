@@ -10,9 +10,9 @@ data_providers:
   - tag: geoip
     file: "/etc/mosdns/geoip.dat"
     auto_reload: true
-  - tag: gfwip
-    file: "/etc/mosdns/gfw_ip_list.txt"
-    auto_reload: true
+#  - tag: gfwip
+#    file: "/etc/mosdns/gfw_ip_list.txt"
+#    auto_reload: true
   - tag: "mem_cache"
     type: "cache"
     args:
@@ -212,11 +212,11 @@ plugins:
       # - "example.example"
   # For more info on geosite: https://github.com/v2fly/domain-list-community/tree/master/data
   # 匹配污染IP的插件
-  - tag: response_has_gfw_ip
-    type: response_matcher
-    args:
-      ip:
-        - "provider:gfwip"
+#  - tag: response_has_gfw_ip
+#    type: response_matcher
+#    args:
+#      ip:
+#        - "provider:gfwip"
   - tag: response_has_local_ip
     type: response_matcher
     args:
@@ -261,7 +261,7 @@ plugins:
                 - - forward_query_to_local_360
                 - - forward_query_to_local_alidns
                 - - forward_query_to_local_dnspod
-            - if: '((! response_has_local_ip) && [_response_valid_answer]) || (! response_has_valid_rcode) || (response_has_gfw_ip)'
+            - if: '((! response_has_local_ip) && [_response_valid_answer]) || (! response_has_valid_rcode)'    #暂时测试失败(response_has_gfw_ip)
               exec:
                 - _drop_response
           secondary:
