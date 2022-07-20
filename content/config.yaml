@@ -360,7 +360,7 @@ plugins:
     type: query_matcher
     args:
       domain:
-        - 'provider:geosite:category-ads-all'
+        - 'provider:geosite:category-ads'
 - tag: response_has_valid_rcode
     type: response_matcher
     args:
