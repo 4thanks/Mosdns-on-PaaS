@@ -355,12 +355,6 @@ plugins:
         - 'provider:geoip:cn'
       # - "192.168.1.1/24"
   # geoip support two-letter country code: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-  # 匹配广告域名的插件
-  - tag: query_is_ad_domain
-    type: query_matcher
-    args:
-      domain:
-        - 'provider:geosite:category-ads'
 - tag: response_has_valid_rcode
     type: response_matcher
     args:
@@ -384,11 +378,7 @@ plugins:
         - set_edns0_bufsize
         - set_edns0_client_subnet
         - _pad_query
-        # 屏蔽黑名单、广告、局域网IP、TYPE65类型请求
-        - if: "query_is_ad_domain"
-          exec:
-            - _new_nxdomain_response
-            - _return
+
         - primary:
             - parallel:
                 - - forward_query_to_local_360
