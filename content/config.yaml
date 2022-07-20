@@ -1,5 +1,8 @@
+# For detailed configuration guide(In Chinese): https://irine-sistiana.gitbook.io/mosdns-wiki/
+
 log:
   level: info
+
 data_providers:
   - tag: geosite
     file: "/etc/mosdns/dlc.dat"
@@ -348,14 +351,23 @@ plugins:
           dial_addr: '[2620:0:ccd::2]:853'
           enable_pipeline: true
           trusted: true
-  - tag: response_has_local_ip
+  - tag: query_is_blacklist_domain
+    type: query_matcher
+    args:
+      domain:
+        - 'provider:geosite:category-ads'
+      # - 'provider:geosite:category-porn'
+      # - "example.example"
+  # For more info on geosite: https://github.com/v2fly/domain-list-community/tree/master/data
+
+  - tag: response_has_blacklist_ip
     type: response_matcher
     args:
       ip:
         - 'provider:geoip:cn'
       # - "192.168.1.1/24"
   # geoip support two-letter country code: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-- tag: response_has_valid_rcode
+  - tag: response_has_valid_rcode
     type: response_matcher
     args:
       rcode: [0]
@@ -378,7 +390,6 @@ plugins:
         - set_edns0_bufsize
         - set_edns0_client_subnet
         - _pad_query
-
         - primary:
             - parallel:
                 - - forward_query_to_local_360
