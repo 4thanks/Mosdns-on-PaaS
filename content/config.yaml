@@ -244,6 +244,7 @@ plugins:
         - set_edns0_bufsize
         - set_edns0_client_subnet
         - _pad_query
+        - mem_cache
         - if: "query_is_blacklist_domain || match_qtype65"
           exec:
             - _new_nxdomain_response
