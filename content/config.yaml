@@ -151,7 +151,6 @@ plugins:
         - addr: 'https://dns-unfiltered.adguard.com/dns-query'
           dial_addr: '94.140.14.141:443'
           trusted: true
-          trusted: true
         - addr: 'tls://dns-unfiltered.adguard.com'
           dial_addr: '94.140.14.140:853'
           enable_pipeline: true
