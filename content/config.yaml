@@ -141,6 +141,25 @@ plugins:
           dial_addr: '120.53.53.53:853'
           enable_pipeline: true
           trusted: true
+
+  - tag: forward_query_to_remote_twnic
+    type: fast_forward
+    args:
+      upstream:
+        - addr: 'https://dns.twnic.tw/dns-query'
+          dial_addr: '101.101.101.101:443'
+          trusted: true
+        - addr: 'https://dns.twnic.tw/dns-query'
+          dial_addr: '101.102.103.104:443'
+          trusted: true
+        - addr: 'tls://101.101.101.101'
+          dial_addr: '101.101.101.101:853'
+          enable_pipeline: true
+          trusted: true
+        - addr: 'tls://101.101.101.101'
+          dial_addr: '101.102.103.104:853'
+          enable_pipeline: true
+          trusted: true
   - tag: forward_query_to_remote_adguard
     type: fast_forward
     args:
@@ -262,6 +281,7 @@ plugins:
             - _return
         - primary:
             - parallel:
+                - _prefer_ipv4
                 - - forward_query_to_local_360
                 - - forward_query_to_local_alidns
                 - - forward_query_to_local_dnspod
@@ -272,6 +292,7 @@ plugins:
             - primary:
                 - parallel:
                     - - forward_query_to_remote_adguard
+                    - - forward_query_to_remote_twnic
                     - - forward_query_to_remote_google
                     - - forward_query_to_remote_opendns
                 - if: '(! response_has_valid_rcode)'
