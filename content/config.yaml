@@ -10,6 +10,9 @@ data_providers:
   - tag: geoip
     file: "/etc/mosdns/geoip.dat"
     auto_reload: true
+  - tag: geosite2
+    file: "/etc/mosdns/diy/geosite2.dat"
+    auto_reload: true
   - tag: gfwip
     file: "/etc/mosdns/gfw_ip_list.txt"
     auto_reload: true
@@ -247,7 +250,7 @@ plugins:
     type: query_matcher
     args:
       domain:
-        - "provider:geosite:cn,apple-cn,icloud,google-cn,tld-cn"
+        - "provider:geosite2:cn,apple-cn,icloud,google-cn,tld-cn"
   - tag: response_has_local_ip
     type: response_matcher
     args:
