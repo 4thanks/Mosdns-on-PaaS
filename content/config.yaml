@@ -242,7 +242,12 @@ plugins:
       # - 'provider:geosite:category-porn'
       # - "example.example"
   # For more info on geosite: https://github.com/v2fly/domain-list-community/tree/master/data
-
+  # 匹配本地域名的插件
+  - tag: query_is_local_domain
+    type: query_matcher
+    args:
+      domain:
+        - "provider:geosite:cn,apple-cn,icloud,google-cn,tld-cn"
   - tag: response_has_local_ip
     type: response_matcher
     args:
@@ -265,20 +270,38 @@ plugins:
       auto: true
       mask4: 24
       mask6: 56
+  # local 序列
+  - tag: forward_local
+    type: sequence
+    args:
+      exec:
+        - primary:
+          - parallel: # 并行
+              - - "forward_query_to_local_360"
+              - - "forward_query_to_local_alidns"
+              - - "forward_query_to_local_dnspod"
+          secondary:
+            - forward_query_to_remote_google # 备用本地
+          fast_fallback: 400 # 这里建议设置成 primary 服务器正常延时的 2~5 倍 单位: 毫秒。
+          always_standby: true
   - tag: main_server
     type: sequence
     args:
       exec:
-        - _enable_response_padding
         - _misc_optm
-        - set_edns0_bufsize
-        - set_edns0_client_subnet
-        - _pad_query
         - mem_cache
         - if: "query_is_blacklist_domain || match_qtype65"
           exec:
             - _new_nxdomain_response
             - _return
+        # 已知的本地域名用本地服务器解析
+        - if: query_is_local_domain
+          exec:
+            - _prefer_ipv4
+            - forward_local
+            - if: response_has_local_ip
+              exec:
+                - _return
         - primary:
             - parallel:
                 - _prefer_ipv4
@@ -291,6 +314,10 @@ plugins:
           secondary:
             - primary:
                 - parallel:
+                    - _enable_response_padding
+                    - set_edns0_bufsize
+                    - set_edns0_client_subnet
+                    - _pad_query
                     - - forward_query_to_remote_adguard
                     - - forward_query_to_remote_twnic
                     - - forward_query_to_remote_google
